@@ -1,12 +1,44 @@
 import React from "react";
+import { useContext } from "react";
 import { Button, Container, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../providers/AuthProvider";
+import { useState } from "react";
 
 const Login = () => {
+  const { signIn } = useContext(AuthContext);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location?.state?.from?.pathname || "/category/0";
+
+  console.log("login page location", location);
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const email = form.email.value;
+    const password = form.password.value;
+    signIn(email, password)
+      .then((result) => {
+        const loggedUser = result.user;
+        form.reset();
+        setSuccess("login successfully");
+        setError("");
+        navigate(from, { replace: true });
+      })
+      .catch((err) => {
+        setSuccess("");
+        setError(err.message);
+      });
+  };
   return (
     <Container className="w-25 mx-auto">
-         <h3>Please login</h3>
-      <Form>
+      <h3>Please login</h3>
+      {success}
+      <Form onSubmit={handleLogin}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Name</Form.Label>
           <Form.Control
@@ -26,18 +58,16 @@ const Login = () => {
             required
           />
         </Form.Group>
-        <Form.Group className="mb-3" controlId="formBasicCheckbox">
-          <Form.Check type="checkbox" label="Check me out" />
-        </Form.Group>
+
         <Button variant="primary" type="submit">
           login
-        </Button><br />
+        </Button>
+        <br />
         <Form.Text className="text-danger"></Form.Text>
         <Form.Text className="text-success"></Form.Text>
         <Form.Text className="text-secondary">
-            Don't Have an Account? <Link to="/register">Register</Link>
+          Don't Have an Account? <Link to="/register">Register</Link>
         </Form.Text>
-
       </Form>
     </Container>
   );
