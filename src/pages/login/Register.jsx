@@ -3,11 +3,12 @@ import { Button, Container, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../providers/AuthProvider";
 import { useState } from "react";
+import useTitle from "../../hook/useTitle";
 
 const Register = () => {
   const { createUser } = useContext(AuthContext);
   const [accepted, setAccepted] = useState(false);
-
+  useTitle('register')
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
